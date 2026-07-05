@@ -4,7 +4,9 @@ import "./globals.css";
 import "./visuals.css";
 import "./controls.css";
 import "./responsive.css";
+import "./auth.css";
 import { AppShell } from "../components/AppShell";
+import { AuthProvider } from "../hooks/useAuth";
 
 export const metadata: Metadata = {
   title: "Habit Tracker",
@@ -17,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppShell>{children}</AppShell>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 export type Habit = {
   id: string;
+  user_id: string;
   name: string;
   category: string;
   color: string;
@@ -8,6 +9,7 @@ export type Habit = {
 };
 
 export type CheckIn = {
+  user_id: string;
   habit_id: string;
   date: string;
   completed_at: string;
@@ -38,4 +40,17 @@ export type NewHabit = {
   name: string;
   category: string;
   color: string;
+};
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+};
+
+export type AuthResponse = {
+  access_token: string;
+  token_type: string;
+  user: User;
 };

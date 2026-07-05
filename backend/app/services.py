@@ -6,9 +6,9 @@ from app.models import CheckIn, DashboardStats, ProgressSummary, SeriesPoint
 from app.storage import store
 
 
-def build_dashboard_stats(target_date: date) -> DashboardStats:
-    habits = store.list_habits(active_only=True)
-    checkins = store.all_checkins()
+def build_dashboard_stats(user_id: str, target_date: date) -> DashboardStats:
+    habits = store.list_habits(user_id, active_only=True)
+    checkins = store.all_checkins(user_id)
     habit_ids = {habit.id for habit in habits}
 
     today_checkins = [

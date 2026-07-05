@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { BarChart3, CalendarCheck, Flame, ListChecks } from "lucide-react";
+import { BarChart3, CalendarCheck, Flame, ListChecks, LogOut } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 const links = [
   { href: "/", label: "Dashboard", icon: BarChart3 },
@@ -13,6 +15,25 @@ const links = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { ready, token, user, logout } = useAuth();
+  const authPath = ["/login", "/signup", "/forgot-password", "/reset-password"].some(
+    (path) => pathname.startsWith(path),
+  );
+
+  useEffect(() => {
+    if (!ready) return;
+    if (!token && !authPath) router.replace("/login");
+    if (token && authPath) router.replace("/");
+  }, [authPath, ready, router, token]);
+
+  if (authPath) {
+    return <main className="auth-shell">{children}</main>;
+  }
+
+  if (!ready || !token) {
+    return <main className="auth-shell"><div className="panel">Loading...</div></main>;
+  }
 
   return (
     <div className="shell">
@@ -38,6 +59,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+        <div className="account-box">
+          <span>{user?.name}</span>
+          <button className="button ghost" onClick={logout} type="button">
+            <LogOut size={16} /> Log out
+          </button>
+        </div>
       </aside>
       <main className="content">{children}</main>
     </div>

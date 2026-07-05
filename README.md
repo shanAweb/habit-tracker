@@ -12,6 +12,7 @@ A professional habit tracking web app built as a monorepo with:
 - Add and remove habits.
 - Mark and unmark daily habit check-ins.
 - Dashboard refreshes immediately after check-ins and receives live WebSocket updates.
+- JWT authentication with signup, login, forgot password, and reset password flows.
 
 ## Backend
 
@@ -24,6 +25,8 @@ uvicorn app.main:app --reload
 ```
 
 The API runs on `http://localhost:8000`.
+
+Set a production `JWT_SECRET` before deploying the backend.
 
 ## Frontend
 

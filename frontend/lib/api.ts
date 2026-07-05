@@ -1,18 +1,24 @@
-import type { CheckIn, DashboardStats, Habit, NewHabit } from "./types";
+import type { AuthResponse, CheckIn, DashboardStats, Habit, NewHabit } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+  token?: string | null,
+): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   });
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail ?? `API request failed: ${response.status}`);
   }
 
   if (response.status === 204) {
@@ -24,21 +30,43 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   wsUrl: API_URL.replace(/^http/, "ws") + "/ws",
-  habits: () => request<Habit[]>("/api/habits"),
-  stats: (date: string) => request<DashboardStats>(`/api/stats?date=${date}`),
-  checkins: (date: string) => request<CheckIn[]>(`/api/checkins?date=${date}`),
-  createHabit: (habit: NewHabit) =>
+  signup: (name: string, email: string, password: string) =>
+    request<AuthResponse>("/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    }),
+  login: (email: string, password: string) =>
+    request<AuthResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }),
+  forgotPassword: (email: string) =>
+    request<{ message: string; reset_token?: string }>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token: string, password: string) =>
+    request<{ message: string }>("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
+    }),
+  habits: (token: string) => request<Habit[]>("/api/habits", undefined, token),
+  stats: (date: string, token: string) =>
+    request<DashboardStats>(`/api/stats?date=${date}`, undefined, token),
+  checkins: (date: string, token: string) =>
+    request<CheckIn[]>(`/api/checkins?date=${date}`, undefined, token),
+  createHabit: (habit: NewHabit, token: string) =>
     request<Habit>("/api/habits", {
       method: "POST",
       body: JSON.stringify(habit),
-    }),
-  deleteHabit: (habitId: string) =>
-    request<void>(`/api/habits/${habitId}`, { method: "DELETE" }),
-  createCheckIn: (habitId: string, date: string) =>
+    }, token),
+  deleteHabit: (habitId: string, token: string) =>
+    request<void>(`/api/habits/${habitId}`, { method: "DELETE" }, token),
+  createCheckIn: (habitId: string, date: string, token: string) =>
     request<CheckIn>("/api/checkins", {
       method: "POST",
       body: JSON.stringify({ habit_id: habitId, date }),
-    }),
-  deleteCheckIn: (habitId: string, date: string) =>
-    request<void>(`/api/checkins/${habitId}?date=${date}`, { method: "DELETE" }),
+    }, token),
+  deleteCheckIn: (habitId: string, date: string, token: string) =>
+    request<void>(`/api/checkins/${habitId}?date=${date}`, { method: "DELETE" }, token),
 };

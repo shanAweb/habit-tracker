@@ -86,6 +86,20 @@ input {
   background: var(--surface);
 }
 
+.account-box {
+  display: grid;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.account-box span {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
 .content {
   width: min(1180px, 100%);
   padding: 36px;

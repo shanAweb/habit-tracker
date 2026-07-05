@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth } from "./useAuth";
 import { api } from "../lib/api";
 import { todayIso } from "../lib/date";
 import type { CheckIn, DashboardStats, Habit, NewHabit } from "../lib/types";
@@ -8,6 +9,7 @@ import type { CheckIn, DashboardStats, Habit, NewHabit } from "../lib/types";
 type LoadState = "idle" | "loading" | "ready" | "error";
 
 export function useHabitData() {
+  const { token, logout } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [checkins, setCheckins] = useState<CheckIn[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -17,11 +19,12 @@ export function useHabitData() {
 
   const refresh = useCallback(async () => {
     try {
+      if (!token) return;
       setState((current) => (current === "ready" ? current : "loading"));
       const [habitData, checkinData, statData] = await Promise.all([
-        api.habits(),
-        api.checkins(date),
-        api.stats(date),
+        api.habits(token),
+        api.checkins(date, token),
+        api.stats(date, token),
       ]);
       setHabits(habitData);
       setCheckins(checkinData);
@@ -29,36 +32,44 @@ export function useHabitData() {
       setState("ready");
       setError("");
     } catch (err) {
+      if (err instanceof Error && err.message === "Authentication required") {
+        logout();
+      }
       setState("error");
       setError(err instanceof Error ? err.message : "Unable to load habit data");
     }
-  }, [date]);
+  }, [date, logout, token]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
   useEffect(() => {
+    if (!token) return;
     const socket = new WebSocket(api.wsUrl);
     socket.onmessage = () => void refresh();
     return () => socket.close();
-  }, [refresh]);
+  }, [refresh, token]);
 
   async function addHabit(habit: NewHabit) {
-    await api.createHabit(habit);
+    if (!token) return;
+    await api.createHabit(habit, token);
     await refresh();
   }
 
   async function removeHabit(habitId: string) {
-    await api.deleteHabit(habitId);
+    if (!token) return;
+    await api.deleteHabit(habitId, token);
     await refresh();
   }
 
   async function toggleCheckIn(habitId: string, checked: boolean) {
     if (checked) {
-      await api.createCheckIn(habitId, date);
+      if (!token) return;
+      await api.createCheckIn(habitId, date, token);
     } else {
-      await api.deleteCheckIn(habitId, date);
+      if (!token) return;
+      await api.deleteCheckIn(habitId, date, token);
     }
     await refresh();
   }

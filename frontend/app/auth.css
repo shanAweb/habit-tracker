@@ -1,0 +1,57 @@
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff7ed 100%);
+}
+
+.auth-card {
+  width: min(460px, 100%);
+  display: grid;
+  gap: 20px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.auth-brand {
+  margin-bottom: 0;
+}
+
+.auth-card h1 {
+  margin: 0 0 8px;
+  font-size: 34px;
+}
+
+.auth-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-footer {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.auth-footer a,
+.inline-link {
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+.token-box {
+  overflow-wrap: anywhere;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: var(--surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
