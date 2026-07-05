@@ -5,11 +5,13 @@ import { useAuth } from "./useAuth";
 import { api } from "../lib/api";
 import { todayIso } from "../lib/date";
 import type { CalendarDay, CheckIn, DashboardStats, Habit, NewHabit } from "../lib/types";
+import { useNotifications } from "./useNotifications";
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 
 export function useHabitData() {
   const { token, logout } = useAuth();
+  const { celebrate } = useNotifications();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [checkins, setCheckins] = useState<CheckIn[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -74,6 +76,8 @@ export function useHabitData() {
     if (checked) {
       if (!token) return;
       await api.createCheckIn(habitId, date, token, note);
+      const habit = habits.find((item) => item.id === habitId);
+      celebrate("Check-in locked", `${habit?.name ?? "Habit"} earned XP. Keep the chain warm.`);
     } else {
       if (!token) return;
       await api.deleteCheckIn(habitId, date, token);

@@ -13,6 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { NotificationBell } from "./NotificationBell";
 
 const links = [
   { href: "/", label: "Dashboard", icon: BarChart3 },
@@ -68,6 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+        <NotificationBell />
         <div className="account-box">
           <span>{user?.name}</span>
           <button className="button ghost" onClick={logout} type="button">

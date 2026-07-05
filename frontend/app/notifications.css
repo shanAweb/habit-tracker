@@ -1,0 +1,91 @@
+.notification-box {
+  position: relative;
+  margin-top: 18px;
+}
+
+.notify-trigger {
+  width: 100%;
+}
+
+.notification-panel {
+  position: absolute;
+  left: 0;
+  top: 48px;
+  z-index: 5;
+  width: min(360px, 82vw);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.notice-actions,
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.notice-list {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.notice {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.notice.unread {
+  border-color: #fed7aa;
+  background: var(--surface);
+}
+
+.notice p,
+.reward-panel p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.reward-panel strong {
+  display: block;
+  font-size: 32px;
+}
+
+.xp-track {
+  height: 12px;
+  margin: 14px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-strong);
+}
+
+.xp-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--success));
+  transition: width 500ms ease;
+}
+
+.badge {
+  padding: 8px 10px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #f3f4f6;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.badge.active {
+  color: #ffffff;
+  background: var(--primary);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.24);
+}

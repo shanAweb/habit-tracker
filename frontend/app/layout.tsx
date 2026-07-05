@@ -5,8 +5,10 @@ import "./visuals.css";
 import "./controls.css";
 import "./responsive.css";
 import "./auth.css";
+import "./notifications.css";
 import { AppShell } from "../components/AppShell";
 import { AuthProvider } from "../hooks/useAuth";
+import { NotificationProvider } from "../hooks/useNotifications";
 
 export const metadata: Metadata = {
   title: "Habit Tracker",
@@ -20,7 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <AppShell>{children}</AppShell>
+          <NotificationProvider>
+            <AppShell>{children}</AppShell>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

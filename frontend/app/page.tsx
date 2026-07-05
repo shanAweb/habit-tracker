@@ -6,9 +6,10 @@ import { ProgressRing } from "../components/ProgressRing";
 import { StatCard } from "../components/StatCard";
 import { useHabitData } from "../hooks/useHabitData";
 import { prettyToday } from "../lib/date";
+import { rewardState } from "../lib/rewards";
 
 export default function DashboardPage() {
-  const { stats, state, error } = useHabitData();
+  const { habits, checkins, stats, state, error } = useHabitData();
 
   if (state === "error") {
     return <div className="error-state">{error}</div>;
@@ -16,6 +17,7 @@ export default function DashboardPage() {
 
   const daily = stats?.daily.percentage ?? 0;
   const analytics = stats?.analytics;
+  const rewards = rewardState(stats, habits, checkins);
 
   return (
     <>
@@ -50,6 +52,38 @@ export default function DashboardPage() {
           helper="Vs previous week"
           icon={Target}
         />
+      </section>
+      <section className="grid dashboard-grid" style={{ marginTop: 18 }}>
+        <div className="panel reward-panel">
+          <div className="section-head">
+            <h2>Reward engine</h2>
+            <span>Level {rewards.level}</span>
+          </div>
+          <strong>{rewards.xp} XP</strong>
+          <div className="xp-track">
+            <span style={{ width: `${(rewards.levelProgress / 250) * 100}%` }} />
+          </div>
+          <p>{rewards.quest}</p>
+          <div className="badge-row">
+            {rewards.badges.map((badge) => (
+              <span className={badge.active ? "badge active" : "badge"} key={badge.label}>
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="panel reward-panel">
+          <div className="section-head">
+            <h2>Comeback loop</h2>
+            <span>Low friction</span>
+          </div>
+          <strong>{analytics?.at_risk.length ? "Win the next 2 minutes" : "Momentum protected"}</strong>
+          <p>
+            {analytics?.at_risk.length
+              ? "Start with one tiny check-in. The app will count the comeback."
+              : "Nothing is slipping right now."}
+          </p>
+        </div>
       </section>
       <section className="grid dashboard-grid" style={{ marginTop: 18 }}>
         <div className="panel">
