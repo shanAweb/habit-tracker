@@ -84,7 +84,7 @@
   grid-auto-flow: column;
   grid-auto-columns: minmax(26px, 1fr);
   gap: 10px;
-  align-items: end;
+  align-items: flex-end;
   overflow-x: auto;
   padding: 4px 2px;
 }
@@ -93,7 +93,7 @@
   min-width: 24px;
   display: grid;
   gap: 8px;
-  align-items: end;
+  align-items: flex-end;
   text-align: center;
   color: var(--muted);
   font-size: 12px;
@@ -103,7 +103,7 @@
 .bar-track {
   height: 200px;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   border-radius: 8px;
   background: #fff7ed;
   overflow: hidden;
