@@ -1,0 +1,55 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr auto auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.habit-list,
+.check-list {
+  display: grid;
+  gap: 12px;
+}
+
+.habit-row,
+.check-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.swatch {
+  width: 14px;
+  height: 42px;
+  border-radius: 999px;
+}
+
+.habit-meta strong,
+.check-meta strong {
+  display: block;
+}
+
+.habit-meta span,
+.check-meta span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.check-toggle {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.check-toggle.done {
+  color: #ffffff;
+  border-color: var(--success);
+  background: var(--success);
+}

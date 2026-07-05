@@ -1,0 +1,40 @@
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 14px 18px;
+  }
+
+  .brand {
+    margin-bottom: 12px;
+  }
+
+  .content {
+    padding: 22px 18px;
+  }
+
+  .dashboard-grid,
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habit-row,
+  .check-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .habit-row .button {
+    grid-column: 2;
+  }
+}
