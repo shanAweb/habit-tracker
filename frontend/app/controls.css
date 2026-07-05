@@ -5,16 +5,48 @@
   align-items: end;
 }
 
+.habit-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.weekday-row,
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.weekday-row label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .habit-list,
 .check-list {
   display: grid;
   gap: 12px;
 }
 
-.habit-row,
 .check-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.habit-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
   gap: 14px;
   align-items: center;
 }
@@ -52,4 +84,83 @@
   color: #ffffff;
   border-color: var(--success);
   background: var(--success);
+}
+
+.check-row.complete {
+  border-color: #bbf7d0;
+}
+
+.note-input {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.calendar-cell {
+  min-height: 136px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.calendar-cell span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.mini-status {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px;
+  color: var(--muted);
+  text-align: left;
+  background: #f9fafb;
+}
+
+.done-text {
+  color: var(--success);
+  background: #ecfdf5;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16px, 1fr));
+  gap: 6px;
+}
+
+.heat {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: #f3f4f6;
+}
+
+.heat.done {
+  background: var(--success);
+}
+
+.heat.missed {
+  background: #fb7185;
+}
+
+.insight-list {
+  display: grid;
+  gap: 10px;
+}
+
+.insight-list p {
+  margin: 0;
+  color: var(--muted);
 }

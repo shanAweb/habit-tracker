@@ -9,3 +9,8 @@ export function prettyToday() {
     day: "numeric",
   }).format(new Date());
 }
+
+export function monthStartIso() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+}

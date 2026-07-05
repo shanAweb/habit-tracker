@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import Link from "next/link";
 import type { Habit } from "../lib/types";
 
 type HabitListProps = {
@@ -18,8 +19,12 @@ export function HabitList({ habits, onRemove }: HabitListProps) {
           <span className="swatch" style={{ background: habit.color }} />
           <div className="habit-meta">
             <strong>{habit.name}</strong>
-            <span>{habit.category}</span>
+            <span>
+              {habit.category} · {label(habit)}
+              {habit.reminder_enabled && habit.reminder_time ? ` · ${habit.reminder_time}` : ""}
+            </span>
           </div>
+          <Link className="button secondary" href={`/habits/${habit.id}`}>Details</Link>
           <button
             aria-label={`Remove ${habit.name}`}
             className="button ghost"
@@ -32,4 +37,11 @@ export function HabitList({ habits, onRemove }: HabitListProps) {
       ))}
     </div>
   );
+}
+
+function label(habit: Habit) {
+  if (habit.frequency === "weekly") return `${habit.target_count}x/week`;
+  if (habit.frequency === "monthly") return `${habit.monthly_target}x/month`;
+  if (habit.frequency === "weekdays") return "selected weekdays";
+  return "daily";
 }

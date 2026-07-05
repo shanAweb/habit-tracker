@@ -5,6 +5,8 @@ from app.models import (
     AuthResponse,
     ForgotPasswordRequest,
     ForgotPasswordResponse,
+    PasswordChange,
+    ProfileUpdate,
     ResetPasswordRequest,
     User,
     UserCreate,
@@ -37,6 +39,28 @@ def login(payload: UserLogin) -> AuthResponse:
 @router.get("/me", response_model=UserPublic)
 def me(user: User = Depends(current_user)) -> UserPublic:
     return UserPublic(**user.model_dump())
+
+
+@router.put("/me", response_model=UserPublic)
+def update_me(payload: ProfileUpdate, user: User = Depends(current_user)) -> UserPublic:
+    try:
+        updated = store.update_user(user.id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return UserPublic(**updated.model_dump())
+
+
+@router.put("/password")
+def change_password(payload: PasswordChange, user: User = Depends(current_user)) -> dict:
+    if not verify_password(payload.current_password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    store.update_user_password(user.id, hash_password(payload.new_password))
+    return {"message": "Password changed successfully"}
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_me(user: User = Depends(current_user)) -> None:
+    store.delete_user(user.id)
 
 
 @router.post("/forgot-password", response_model=ForgotPasswordResponse)

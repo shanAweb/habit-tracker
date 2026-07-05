@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "./useAuth";
 import { api } from "../lib/api";
 import { todayIso } from "../lib/date";
-import type { CheckIn, DashboardStats, Habit, NewHabit } from "../lib/types";
+import type { CalendarDay, CheckIn, DashboardStats, Habit, NewHabit } from "../lib/types";
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 
@@ -13,6 +13,7 @@ export function useHabitData() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [checkins, setCheckins] = useState<CheckIn[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [calendar, setCalendar] = useState<CalendarDay[]>([]);
   const [state, setState] = useState<LoadState>("idle");
   const [error, setError] = useState("");
   const date = useMemo(() => todayIso(), []);
@@ -57,16 +58,22 @@ export function useHabitData() {
     await refresh();
   }
 
+  async function updateHabit(habitId: string, habit: NewHabit) {
+    if (!token) return;
+    await api.updateHabit(habitId, habit, token);
+    await refresh();
+  }
+
   async function removeHabit(habitId: string) {
     if (!token) return;
     await api.deleteHabit(habitId, token);
     await refresh();
   }
 
-  async function toggleCheckIn(habitId: string, checked: boolean) {
+  async function toggleCheckIn(habitId: string, checked: boolean, note = "") {
     if (checked) {
       if (!token) return;
-      await api.createCheckIn(habitId, date, token);
+      await api.createCheckIn(habitId, date, token, note);
     } else {
       if (!token) return;
       await api.deleteCheckIn(habitId, date, token);
@@ -74,16 +81,24 @@ export function useHabitData() {
     await refresh();
   }
 
+  const loadCalendar = useCallback(async (monthDate = date) => {
+    if (!token) return;
+    setCalendar(await api.calendar(monthDate, token));
+  }, [date, token]);
+
   return {
     habits,
     checkins,
     stats,
+    calendar,
     date,
     state,
     error,
     addHabit,
+    updateHabit,
     removeHabit,
     toggleCheckIn,
+    loadCalendar,
     refresh,
   };
 }

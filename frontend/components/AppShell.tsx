@@ -4,13 +4,22 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { BarChart3, CalendarCheck, Flame, ListChecks, LogOut } from "lucide-react";
+import {
+  BarChart3,
+  CalendarCheck,
+  Flame,
+  ListChecks,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
 const links = [
   { href: "/", label: "Dashboard", icon: BarChart3 },
   { href: "/habits", label: "Habits", icon: ListChecks },
   { href: "/check-in", label: "Check In", icon: CalendarCheck },
+  { href: "/calendar", label: "Calendar", icon: CalendarCheck },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

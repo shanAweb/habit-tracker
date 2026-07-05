@@ -15,6 +15,7 @@ export default function DashboardPage() {
   }
 
   const daily = stats?.daily.percentage ?? 0;
+  const analytics = stats?.analytics;
 
   return (
     <>
@@ -43,6 +44,12 @@ export default function DashboardPage() {
           helper="Perfect days in a row"
           icon={Flame}
         />
+        <StatCard
+          title="Trend"
+          value={`${analytics?.weekly_trend ?? 0}%`}
+          helper="Vs previous week"
+          icon={Target}
+        />
       </section>
       <section className="grid dashboard-grid" style={{ marginTop: 18 }}>
         <div className="panel">
@@ -56,6 +63,31 @@ export default function DashboardPage() {
       </section>
       <section style={{ marginTop: 18 }}>
         <BarChart title="This month" data={stats?.monthly_series ?? []} />
+      </section>
+      <section className="grid dashboard-grid" style={{ marginTop: 18 }}>
+        <div className="panel">
+          <div className="section-head">
+            <h2>Analytics</h2>
+            <span>{analytics?.streak_milestone ?? "Start a streak today"}</span>
+          </div>
+          <div className="insight-list">
+            <p>Best habit: {analytics?.best_habit?.name ?? "None yet"}</p>
+            <p>Most missed: {analytics?.most_missed_habit?.name ?? "None yet"}</p>
+            <p>Monthly trend: {analytics?.monthly_trend ?? 0}%</p>
+          </div>
+        </div>
+        <div className="panel">
+          <div className="section-head">
+            <h2>At risk today</h2>
+            <span>{analytics?.at_risk.length ?? 0} habits</span>
+          </div>
+          <div className="habit-list">
+            {(analytics?.at_risk ?? []).map((habit) => (
+              <div className="empty-state" key={habit.habit_id}>{habit.name}</div>
+            ))}
+            {analytics?.at_risk.length === 0 && <div className="empty-state">Nothing at risk.</div>}
+          </div>
+        </div>
       </section>
     </>
   );

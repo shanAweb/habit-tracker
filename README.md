@@ -13,6 +13,7 @@ A professional habit tracking web app built as a monorepo with:
 - Mark and unmark daily habit check-ins.
 - Dashboard refreshes immediately after check-ins and receives live WebSocket updates.
 - JWT authentication with signup, login, forgot password, and reset password flows.
+- Profile settings, habit frequency options, reminders, habit detail analytics, calendar backfill, category filtering, and CSV export.
 
 ## Backend
 

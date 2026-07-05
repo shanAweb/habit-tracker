@@ -19,6 +19,9 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateProfile: (name: string, email: string, timezone: string, week_start: number) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   forgotPassword: (email: string) => Promise<string | undefined>;
   resetPassword: (token: string, password: string) => Promise<void>;
 };
@@ -62,6 +65,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signup: async (name, email, password) =>
         persist(await api.signup(name, email, password)),
       logout,
+      updateProfile: async (name, email, timezone, week_start) => {
+        if (!token) return;
+        const updated = await api.updateMe({ name, email, timezone, week_start }, token);
+        localStorage.setItem(USER_KEY, JSON.stringify(updated));
+        setUser(updated);
+      },
+      changePassword: async (currentPassword, newPassword) => {
+        if (!token) return;
+        await api.changePassword(currentPassword, newPassword, token);
+      },
+      deleteAccount: async () => {
+        if (!token) return;
+        await api.deleteMe(token);
+        logout();
+      },
       forgotPassword: async (email) => {
         const response = await api.forgotPassword(email);
         return response.reset_token;

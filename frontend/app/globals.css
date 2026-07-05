@@ -29,7 +29,8 @@ a {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -188,9 +189,11 @@ input {
   font-weight: 700;
 }
 
-.field input {
+.field input,
+.field select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
+  background: #ffffff;
 }
