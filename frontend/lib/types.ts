@@ -73,3 +73,8 @@ export type CalendarDay = {
   due: number;
   habits: { habit_id: string; name: string; completed: boolean; due: boolean }[];
 };
+
+export type PushKeyResponse = {
+  public_key: string;
+  configured: boolean;
+};

@@ -1,4 +1,4 @@
-import type { AuthResponse, CalendarDay, CheckIn, DashboardStats, Habit, HabitDetail, NewHabit, User } from "./types";
+import type { AuthResponse, CalendarDay, CheckIn, DashboardStats, Habit, HabitDetail, NewHabit, PushKeyResponse, User } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -55,4 +55,24 @@ export const api = {
   deleteCheckIn: (habitId: string, date: string, token: string) =>
     request<void>(`/api/checkins/${habitId}?date=${date}`, { method: "DELETE" }, token),
   exportUrl: `${API_URL}/api/export/checkins`,
+  pushPublicKey: (token: string) =>
+    request<PushKeyResponse>("/api/notifications/public-key", undefined, token),
+  subscribePush: (subscription: PushSubscriptionJSON, token: string) =>
+    request<{ message: string }>("/api/notifications/subscribe", {
+      method: "POST",
+      body: JSON.stringify(subscription),
+    }, token),
+  unsubscribePush: (endpoint: string, token: string) =>
+    request<{ message: string }>("/api/notifications/unsubscribe", {
+      method: "POST",
+      body: JSON.stringify({ endpoint }),
+    }, token),
+  testPush: (token: string) =>
+    request<{ sent: number }>("/api/notifications/test", {
+      method: "POST",
+      body: JSON.stringify({
+        title: "Habit reminder test",
+        body: "Closed-app push notifications are connected.",
+      }),
+    }, token),
 };

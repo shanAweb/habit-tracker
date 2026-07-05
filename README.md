@@ -14,6 +14,7 @@ A professional habit tracking web app built as a monorepo with:
 - Dashboard refreshes immediately after check-ins and receives live WebSocket updates.
 - JWT authentication with signup, login, forgot password, and reset password flows.
 - Profile settings, habit frequency options, reminders, habit detail analytics, calendar backfill, category filtering, and CSV export.
+- Closed-app Web Push notifications for habit reminder times when VAPID keys are configured.
 
 ## Backend
 
@@ -28,6 +29,17 @@ uvicorn app.main:app --reload
 The API runs on `http://localhost:8000`.
 
 Set a production `JWT_SECRET` before deploying the backend.
+
+For closed-app push notifications, generate VAPID keys:
+
+```bash
+cd backend
+.venv/bin/python -m py_vapid --gen
+.venv/bin/python -m py_vapid --applicationServerKey --private-key private_key.pem
+```
+
+Set `VAPID_PUBLIC_KEY` to the application server key, and set either
+`VAPID_PRIVATE_KEY` to the PEM contents or `VAPID_PRIVATE_KEY_FILE` to the PEM file path.
 
 ## Frontend
 

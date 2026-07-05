@@ -47,6 +47,8 @@ class HabitStore:
             data["habits"] = [item for item in data["habits"] if item.get("user_id") != user_id]
             data["checkins"] = [item for item in data["checkins"] if item.get("user_id") != user_id]
             data["reset_tokens"] = [item for item in data["reset_tokens"] if item["user_id"] != user_id]
+            data["push_subscriptions"] = [item for item in data["push_subscriptions"] if item["user_id"] != user_id]
+            data["notification_deliveries"] = [item for item in data["notification_deliveries"] if item["user_id"] != user_id]
             self._write(data)
 
     def get_user_by_email(self, email: str) -> Optional[User]:
@@ -181,7 +183,7 @@ class HabitStore:
             file.write("\n")
 
     def _empty_data(self) -> Dict[str, List[Dict[str, Any]]]:
-        return {"users": [], "reset_tokens": [], "habits": [], "checkins": []}
+        return {"users": [], "reset_tokens": [], "habits": [], "checkins": [], "push_subscriptions": [], "notification_deliveries": []}
 
     def _habit_options(self, payload: HabitCreate) -> Dict[str, Any]:
         return payload.model_dump(exclude={"name", "category", "color"})

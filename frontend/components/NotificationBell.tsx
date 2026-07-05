@@ -6,7 +6,19 @@ import { useNotifications } from "../hooks/useNotifications";
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
-  const { notices, unread, permission, requestPermission, markAllRead, clearNotices } = useNotifications();
+  const {
+    notices,
+    unread,
+    permission,
+    pushEnabled,
+    pushConfigured,
+    requestPermission,
+    enablePush,
+    disablePush,
+    testPush,
+    markAllRead,
+    clearNotices,
+  } = useNotifications();
 
   return (
     <div className="notification-box">
@@ -24,6 +36,20 @@ export function NotificationBell() {
               Enable browser alerts
             </button>
           )}
+          <div className="empty-state">
+            Push is {pushConfigured ? "configured" : "not configured"} and {pushEnabled ? "enabled" : "disabled"}.
+          </div>
+          <div className="notice-actions">
+            <button className="button" onClick={enablePush} type="button">
+              Enable closed-app push
+            </button>
+            <button className="button secondary" onClick={testPush} type="button">
+              Test push
+            </button>
+            <button className="button ghost" onClick={disablePush} type="button">
+              Disable
+            </button>
+          </div>
           <div className="notice-actions">
             <button className="button ghost" onClick={markAllRead} type="button">
               <CheckCheck size={15} /> Read

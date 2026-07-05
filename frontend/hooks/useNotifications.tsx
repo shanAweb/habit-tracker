@@ -19,7 +19,12 @@ type NotificationContextValue = {
   notices: Notice[];
   unread: number;
   permission: NotificationPermission | "unsupported";
+  pushEnabled: boolean;
+  pushConfigured: boolean;
   requestPermission: () => Promise<void>;
+  enablePush: () => Promise<void>;
+  disablePush: () => Promise<void>;
+  testPush: () => Promise<void>;
   markAllRead: () => void;
   clearNotices: () => void;
   celebrate: (title: string, body: string) => void;
@@ -31,12 +36,22 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const { token, user } = useAuth();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushConfigured, setPushConfigured] = useState(false);
   const storageKey = user ? `habit_notices_${user.id}` : "habit_notices";
 
   useEffect(() => {
     setPermission(typeof Notification === "undefined" ? "unsupported" : Notification.permission);
-    if ("serviceWorker" in navigator) void navigator.serviceWorker.register("/sw.js");
   }, []);
+
+  useEffect(() => {
+    if (!token || !("serviceWorker" in navigator) || !("PushManager" in window)) return;
+    void navigator.serviceWorker.register("/sw.js").then(async (registration) => {
+      const key = await api.pushPublicKey(token);
+      setPushConfigured(key.configured && Boolean(key.public_key));
+      setPushEnabled(Boolean(await registration.pushManager.getSubscription()));
+    });
+  }, [token]);
 
   useEffect(() => {
     if (!user) return;
@@ -96,7 +111,41 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     markAllRead: () => setNotices((items) => items.map((item) => ({ ...item, read: true }))),
     clearNotices: () => setNotices([]),
     celebrate: pushNotice,
-  }), [notices, permission, pushNotice]);
+    pushEnabled,
+    pushConfigured,
+    enablePush: async () => {
+      if (!token) return;
+      const browserPermission = await Notification.requestPermission();
+      setPermission(browserPermission);
+      if (browserPermission !== "granted") return;
+      const key = await api.pushPublicKey(token);
+      if (!key.public_key) return pushNotice("Push setup missing", "Add VAPID keys on the backend.");
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(key.public_key),
+      });
+      await api.subscribePush(subscription.toJSON(), token);
+      setPushConfigured(key.configured);
+      setPushEnabled(true);
+      pushNotice("Push enabled", "You can now get reminders when the app is closed.");
+    },
+    disablePush: async () => {
+      if (!token) return;
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        await api.unsubscribePush(subscription.endpoint, token);
+        await subscription.unsubscribe();
+      }
+      setPushEnabled(false);
+    },
+    testPush: async () => {
+      if (!token) return;
+      const result = await api.testPush(token);
+      pushNotice("Push test sent", `${result.sent} browser subscription received it.`);
+    },
+  }), [notices, permission, pushConfigured, pushEnabled, pushNotice, token]);
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 }
@@ -124,4 +173,11 @@ async function showBrowserNotification(title: string, body: string) {
   const registration = "serviceWorker" in navigator ? await navigator.serviceWorker.ready : null;
   if (registration) return registration.showNotification(title, { body, icon: "/favicon.ico" });
   return new Notification(title, { body });
+}
+
+function urlBase64ToUint8Array(value: string) {
+  const padding = "=".repeat((4 - (value.length % 4)) % 4);
+  const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = window.atob(base64);
+  return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
 }
